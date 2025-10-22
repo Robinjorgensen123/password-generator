@@ -1,0 +1,34 @@
+name: Build, push and deploy backend (main)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image (prod)
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/js24-server:latest ./Backend
+
+      - name: Push Docker image (prod)
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/js24-server:latest
+
+      - name: Deploy to Render
+        env:
+          deploy_url: ${{ secrets.RENDER_DEPLOY_URL }}
+        run: |
+          curl "$deploy_url"
