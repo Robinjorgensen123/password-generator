@@ -8,7 +8,7 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 // Middleware
-app.use(cors())            // Tillåt CORS (frontend kan anropa backend)
+app.use(cors())            // Tillåt CORS (frontend kan anropa backend
 app.use(express.json())    // Parsar JSON i inkommande request
 
 // Dummy route för test
