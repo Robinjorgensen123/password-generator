@@ -12,15 +12,17 @@ export default function Dashboard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [editingId, setEditingId] = useState(null); // vilket lösenord som redigeras
+  const [editWebsite, setEditWebsite] = useState("");
+  const [editUsername, setEditUsername] = useState("");
+  const [editPassword, setEditPassword] = useState("");
+
   const navigate = useNavigate();
 
-  // Hämta lösenord
   const fetchPasswords = async () => {
     try {
       const res = await fetch(`${BACKEND_URL}/api/passwords`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (res.ok) {
@@ -70,9 +72,7 @@ export default function Dashboard() {
     try {
       const res = await fetch(`${BACKEND_URL}/api/passwords/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (res.ok) {
@@ -85,6 +85,47 @@ export default function Dashboard() {
     }
   };
 
+  // Starta redigera - sätt inputvärden och id
+  const startEditing = ({ _id, website, username, password }) => {
+    setEditingId(_id);
+    setEditWebsite(website);
+    setEditUsername(username);
+    setEditPassword(password);
+  };
+
+  // Avbryt redigering
+  const cancelEditing = () => {
+    setEditingId(null);
+  };
+
+  // Spara uppdatering
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/passwords/${editingId}`, {
+        method: "PUT", // eller PATCH beroende på backend
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          website: editWebsite,
+          username: editUsername,
+          password: editPassword,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEditingId(null);
+        fetchPasswords();
+      } else {
+        alert(data.message || "Kunde inte uppdatera lösenord");
+      }
+    } catch (err) {
+      alert("Något gick fel vid uppdatering");
+    }
+  };
+
   // Logga ut
   const handleLogout = () => {
     logout();
@@ -94,14 +135,49 @@ export default function Dashboard() {
   return (
     <div>
       <h2>Dina lösenord</h2>
-      <button onClick={handleLogout} style={{ float: "right", marginBottom: "10px" }}>
+      <button
+        onClick={handleLogout}
+        style={{ float: "right", marginBottom: "10px" }}
+      >
         Logga ut
       </button>
       <ul>
         {passwords.map(({ _id, website, username, password }) => (
           <li key={_id}>
-            <b>{website}</b> ({username}): {password}{" "}
-            <button onClick={() => handleDelete(_id)}>Ta bort</button>
+            {editingId === _id ? (
+              <form onSubmit={handleUpdate} style={{ display: "inline" }}>
+                <input
+                  type="text"
+                  value={editWebsite}
+                  onChange={(e) => setEditWebsite(e.target.value)}
+                  required
+                />
+                <input
+                  type="text"
+                  value={editUsername}
+                  onChange={(e) => setEditUsername(e.target.value)}
+                  required
+                />
+                <input
+                  type="text"
+                  value={editPassword}
+                  onChange={(e) => setEditPassword(e.target.value)}
+                  required
+                />
+                <button type="submit">Spara</button>
+                <button type="button" onClick={cancelEditing}>
+                  Avbryt
+                </button>
+              </form>
+            ) : (
+              <>
+                <b>{website}</b> ({username}): {password}{" "}
+                <button onClick={() => handleDelete(_id)}>Ta bort</button>{" "}
+                <button onClick={() => startEditing({ _id, website, username, password })}>
+                  Uppdatera
+                </button>
+              </>
+            )}
           </li>
         ))}
       </ul>
