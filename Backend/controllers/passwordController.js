@@ -46,7 +46,7 @@ export const getPasswords = async (req, res) => {
   }
 }
 
-// Uppdatera lösenord
+// Uppdatera lösenordet
 export const updatePassword = async (req, res) => {
   try {
     const { id } = req.params
