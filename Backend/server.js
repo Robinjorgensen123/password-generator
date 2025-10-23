@@ -3,6 +3,7 @@ import cors from 'cors'
 import connectDB from './config/db.js'
 import dotenv from "dotenv"
 import userRouter from './routes/userRoutes.js'
+import passwordRouter from "./routes/passwordRoutes.js"
 
 dotenv.config()
 const app = express()
@@ -19,6 +20,7 @@ app.use(cors({
 app.use(express.json())    // Parsar JSON i inkommande request
 
 app.use('/api/user', userRouter)
+app.use("/api/passwords", passwordRouter)
 
 // Här lägger ni era endpoints för användare, lösenord etc.
 
