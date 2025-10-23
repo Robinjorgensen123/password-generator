@@ -2,24 +2,23 @@ import express from 'express'
 import cors from 'cors'
 import connectDB from './config/db.js'
 import dotenv from "dotenv"
+import userRouter from './routes/userRoutes.js'
 
 dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 3000
 
 // Middleware
-app.use(cors())            // Tillåt CORS (frontend kan anropa backend
+const allowedOrigin = process.env.CLIENT_URL || '*'
+
+app.use(cors({
+  origin: allowedOrigin,
+  credentials: true,
+}))
+
 app.use(express.json())    // Parsar JSON i inkommande request
 
-// Dummy route för test
-app.get('/', (req, res) => {
-  res.send('Backend server is running')
-})
-
-// Exempel API-route
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' })
-})
+app.use('/api/user', userRouter)
 
 // Här lägger ni era endpoints för användare, lösenord etc.
 
