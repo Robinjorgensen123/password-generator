@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000
 
 console.log("CLIENT_URL från env:", process.env.CLIENT_URL);
 
-// --- Debug middleware för att logga alla requests ---
+// --- Debug middleware för att logg alla requests ---
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
