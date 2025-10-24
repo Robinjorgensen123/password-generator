@@ -12,6 +12,9 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log("Trying to fetch:", `${BACKEND_URL}/api/user/signup`);
+    
     try {
       const res = await fetch(`${BACKEND_URL}/api/user/signup`, {
         method: "POST",
