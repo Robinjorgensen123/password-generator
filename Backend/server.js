@@ -10,19 +10,17 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 // Middleware
-const allowedOrigin = process.env.CLIENT_URL || '*'
+const allowedOrigin = process.env.CLIENT_URL
 
 app.use(cors({
   origin: allowedOrigin,
   credentials: true,
 }))
 
-app.use(express.json())    // Parsar JSON i inkommande request
+app.use(express.json())
 
 app.use('/api/user', userRouter)
 app.use("/api/passwords", passwordRouter)
-
-// Här lägger ni era endpoints för användare, lösenord etc.
 
 // Starta servern
 const startServer = async () => {
