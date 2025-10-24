@@ -9,6 +9,8 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 3000
 
+console.log("CLIENT_URL från env:", process.env.CLIENT_URL);
+
 // Middleware
 const allowedOrigin = process.env.CLIENT_URL
 
